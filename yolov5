@@ -1,0 +1,92 @@
+from google.colab import drive
+drive.mount('/content/drive')
+cd /content/drive/MyDrive/yolov5-facemask
+!git clone https://github.com/ultralytics/yolov5  # clone repo
+!pip install -U -r yolov5/requirements.txt  # install dependencies
+%cd /content/drive/MyDrive/yolov5-facemask/yolov5
+
+
+! pip install utils
+import torch
+print('torch %s %s' % (torch.__version__, torch.cuda.get_device_properties(0) if torch.cuda.is_available() else 'CPU'))
+#Functions required
+import cv2
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+def imShow(path):
+    '''
+    Function to Display an image
+
+    '''
+    
+    image = cv2.imread(path)
+    height, width = image.shape[:2]
+    resized_image = cv2.resize(image,(3*width, 3*height), interpolation = cv2.INTER_CUBIC)
+
+    fig = plt.gcf()
+    fig.set_size_inches(18, 10)
+    plt.axis("off")
+    plt.imshow(cv2.cvtColor(resized_image, cv2.COLOR_BGR2RGB))
+    plt.show()
+
+
+def download(path):
+    '''
+    Function to download files from colab
+
+    '''
+    from google.colab import files
+    files.download(path)
+    
+    !pip install roboflow
+
+from roboflow import Roboflow
+rf = Roboflow(api_key="P7GHAWofHg2SEneewfAF")
+project = rf.workspace("saba").project("facemaskdetection-wkqst")
+dataset = project.version(2).download("yolov5")
+
+!pip install -U -r /content/drive/MyDrive/yolov5-facemask/yolov5/requirements.txt  # install dependencies
+!python train.py --data /content/drive/MyDrive/yolov5-facemask/yolov5/Facemaskdetection-2/data.yaml --cfg /content/drive/MyDrive/yolov5-facemask/yolov5/models/yolov5s.yaml --weights '' --batch-size 64
+cd /content/drive/MyDrive/yolov5-facemask/yolov5
+!python detect.py --weights /content/drive/MyDrive/yolov5-facemask/yolov5/runs/train/exp5/weights/best.pt --img 416 --conf 0.4 --source /content/drive/MyDrive/yolov5-facemask/yolov5/Facemaskdetection-2/test/images
+%load_ext tensorboard
+%tensorboard --logdir runs/train
+#Functions required
+import cv2
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+def imShow(path):
+    '''
+    Function to Display an image
+
+    '''
+    
+    image = cv2.imread(path)
+    height, width = image.shape[:2]
+    resized_image = cv2.resize(image,(3*width, 3*height), interpolation = cv2.INTER_CUBIC)
+
+    fig = plt.gcf()
+    fig.set_size_inches(18, 10)
+    plt.axis("off")
+    plt.imshow(cv2.cvtColor(resized_image, cv2.COLOR_BGR2RGB))
+    plt.show()
+
+
+def download(path):
+    '''
+    Function to download files from colab
+
+    '''
+    from google.colab import files
+    files.download(path)
+    !pip install matplotlib==3.1.1
+    from IPython.display import Image
+import glob
+import cv2
+import matplotlib.pyplot as plt
+
+for imageName in glob.glob('/content/drive/MyDrive/yolov5-facemask/yolov5/runs/detect/exp2/*jpg'):
+  im = cv2.imread(imageName)
+  imShow(imageName)
